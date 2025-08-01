@@ -120,11 +120,22 @@ possible_three_coords = (
     ((2, 0), (1, 1), (0, 2)),
 )
 
-sample_board = (("X", "X", "X"), ("O", "O", "X"), ("O", "O", "X"))
+
+sample_board = (("O", "X", "O"), ("X", "X", "X"), ("_", "O", "O"))
 
 
 def get_sq(board, coords):
     return board[coords[0]][coords[1]]
+
+
+def get_counts(board):
+    cnt = dict()
+
+    for row in board:
+        for col in row:
+            cnt[col] = cnt.get(col, 0) + 1
+
+    return cnt
 
 
 def check_for_threes(board):
@@ -145,7 +156,23 @@ def check_for_threes(board):
 
 
 def is_valid_position(board: tuple[tuple[str, ...], ...]) -> bool:
-    d = check_for_threes(sample_board)
-    print(d)
+    count = get_counts(board)
+    threes = check_for_threes(board)
 
-    return False
+    o_cnt = count.get("O", 0)
+    x_cnt = count.get("X", 0)
+
+    if o_cnt > x_cnt:
+        return False
+    elif x_cnt - o_cnt > 1:
+        return False
+    elif len(threes.keys()) > 1:
+        return False
+    elif "O" in threes and "X" in threes:
+        return False
+    elif x_cnt > o_cnt and "O" in threes:
+        return False
+    elif o_cnt >= x_cnt and "X" in threes:
+        return False
+
+    return True
